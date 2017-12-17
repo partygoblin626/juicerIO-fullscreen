@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC>
+<head>
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (document.addEventListener) {
+                document.addEventListener('MSFullscreenChange', onFullScreenChange, false);
+                document.addEventListener("fullscreenchange", onFullScreenChange, false);
+                document.addEventListener("webkitfullscreenchange", onFullScreenChange, false);
+                document.addEventListener("mozfullscreenchange", onFullScreenChange, false);
+            }
+
+            var screenWidth = screen.availWidth;
+            var screenHeight = screen.availHeight;
+            var aspectRatio = screenWidth/screenHeight;
+
+//            console.log('Screen height:' +  screenHeight + ', Screenwidth: ' + screenWidth + ' | Aspect ratio: ' + aspectRatio);
+
+
+        });
+
+
+
+        function onFullScreenChange() {
+            var fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+
+            if (fullscreenElement != null){
+                // Going to fullscreen
+                $("#overlay").hide();
+            }
+            else{
+                // Exiting fullscreen
+                $("#overlay").show();
+            }
+        }
+
+        function DoFullScreen() {
+
+            var isInFullScreen = (document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
+                (document.mozFullScreen || document.webkitIsFullScreen);
+
+            var docElm = document.documentElement;
+            if (!isInFullScreen) {
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
+                }
+                else if (docElm.mozRequestFullScreen) {
+                    docElm.mozRequestFullScreen();
+                }
+                else if (docElm.webkitRequestFullScreen) {
+                    docElm.webkitRequestFullScreen();
+                }
+                else if (docElm.msRequestFullscreen){
+                    docElm.msRequestFullscreen();
+                }
+            }
+        }
+
+
+        $(window).resize(function() {
+            if(this.resizeTO) clearTimeout(this.resizeTO);
+            this.resizeTO = setTimeout(function() {
+                $(this).trigger('resizeEnd');
+            }, 500);
+        });
+
+        $(window).bind('resizeEnd', function() {
+            console.log("window is done resizing");
+            var width = $(window).width();
+            var height = $(window).height();
+//            var aspectRatio = (width/height);
+//            var height = window.innerHeight;
+//            var width = window.innerWidth;
+//            var aspectRatio = width/height;
+
+//            console.log('height:' +  height + ', width: ' + width + ' | Aspect ratio: ' + aspectRatio) ;
+
+            //ultra wide screens tend to make the tiles clip off the bottom of the screen.
+            // do some math and shrink it down in a nice way
+//            if (aspectRatio > 1.77){
+//                document.getElementById("feed").setAttribute('class', "widescreen" );
+//
+//                var desiredWidth = height * 1.77;
+//
+//            }
+
+
+            document.getElementById("feed").setAttribute('width', width.toString() );
+            document.getElementById("feed").setAttribute('height', height.toString() );
+        });
+
+    </script>
+
+    <link href="styles.css" type="text/css" media="screen" rel="stylesheet"/>
+
+</head>
+<body>
+<div id="overlay">
+    <button onclick="DoFullScreen()"><img src="expand-icon-minigray.png" width="45" height="45"></button>
+</div>
+
+<iframe id="feed" src='https://www.juicer.io/api/feeds/pahealthsciedu/iframe?per=32&columns=4' frameborder='0'
+    width='1400' height='900' allowfullscreen></iframe>
+
+</body>
+</html>
